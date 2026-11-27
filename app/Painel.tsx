@@ -92,6 +92,9 @@ export default function Painel({ inicial, temLogin }: { inicial: Estado; temLogi
           <div className="top">
             <img className="logo" src="/logo-escuro.png" alt="Igreja Metodista Livre Mairiporã" />
             <div className="acoes">
+              <a className="topo-link" href="/prestacao-de-contas" target="_blank" rel="noopener">
+                <span aria-hidden>↗</span> Prestação de contas
+              </a>
               <span className="pill">{sync}</span>
               {temLogin && (
                 <button className="sair" onClick={() => A.sair()}>
@@ -231,8 +234,10 @@ function VistaPainel({ E, t, meses, prod, mm, mt, run, toast }: Calc & { E: Esta
 }
 
 /* ================= Encomendas ================= */
+type Filtro = "aberto" | "pagoEntregar" | "pagar" | "entregue" | "";
+
 function VistaEncomendas({ E, run }: { E: Estado; run: Run }) {
-  const [filtro, setFiltro] = useState<"aberto" | "entregue" | "pagar" | "">("aberto");
+  const [filtro, setFiltro] = useState<Filtro>("aberto");
   const [aberto, setAberto] = useState(false);
   const [f, setF] = useState({ cliente: "", contato: "", entrega: "", obs: "", pago: false });
   const [itens, setItens] = useState([{ produtoId: E.produtos[0]?.id ?? "", qtd: "1" }]);
@@ -242,7 +247,14 @@ function VistaEncomendas({ E, run }: { E: Estado; run: Run }) {
   const naoPagas = E2.filter((e) => !e.pago);
   const producao: Record<string, number> = {};
   for (const e of E2.filter((e) => e.status === "afazer")) for (const i of e.itens) producao[i.nome] = (producao[i.nome] ?? 0) + i.qtd;
-  const lista = E2.filter((e) => (filtro === "aberto" ? e.status !== "entregue" : filtro === "entregue" ? e.status === "entregue" : filtro === "pagar" ? !e.pago : true));
+  const filtros: Record<Filtro, (e: Encomenda) => boolean> = {
+    aberto: (e) => e.status !== "entregue",
+    pagoEntregar: (e) => e.pago && e.status !== "entregue",
+    pagar: (e) => !e.pago,
+    entregue: (e) => e.status === "entregue",
+    "": () => true,
+  };
+  const lista = E2.filter(filtros[filtro]);
   const prox: Record<Status, [Status, string]> = { afazer: ["pronta", "Marcar pronta"], pronta: ["entregue", "Entregar"], entregue: ["afazer", "Reabrir"] };
   const totalForm = itens.reduce((a, i) => a + (E.produtos.find((p) => p.id === i.produtoId)?.preco ?? 0) * (parseInt(i.qtd) || 0), 0);
 
@@ -271,7 +283,7 @@ function VistaEncomendas({ E, run }: { E: Estado; run: Run }) {
         </p>
       )}
       <details open={aberto} onToggle={(e) => setAberto((e.target as HTMLDetailsElement).open)}>
-        <summary>+ Nova encomenda</summary>
+        <summary className="cta"><span className="cta-icone" aria-hidden>+</span> Nova encomenda<small>cliente, doces e data de entrega</small></summary>
         <form className="f" style={{ marginTop: 10 }} onSubmit={salvar}>
           <div className="two">
             <label>Cliente<input required placeholder="Quem pediu" value={f.cliente} onChange={(e) => setF({ ...f, cliente: e.target.value })} /></label>
@@ -307,8 +319,8 @@ function VistaEncomendas({ E, run }: { E: Estado; run: Run }) {
       <div className="top" style={{ margin: "18px 0 10px" }}>
         <h2 style={{ margin: 0 }}>Pedidos</h2>
         <div className="seg" style={{ width: "100%" }}>
-          {([["aberto", "A entregar"], ["entregue", "Entregues"], ["pagar", "Falta pagar"], ["", "Todas"]] as const).map(([k, n]) => (
-            <button type="button" key={k} className={filtro === k ? "on" : ""} onClick={() => setFiltro(k)}>{n}</button>
+          {([["aberto", "A entregar"], ["pagoEntregar", "Pago, falta entregar"], ["pagar", "Falta pagar"], ["entregue", "Entregues"], ["", "Todas"]] as const).map(([k, n]) => (
+            <button type="button" key={k} className={filtro === k ? "on" : ""} onClick={() => setFiltro(k)}>{n} <span className="conta">{E2.filter(filtros[k]).length}</span></button>
           ))}
         </div>
       </div>
