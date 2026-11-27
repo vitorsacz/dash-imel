@@ -26,6 +26,17 @@ npm run dev                  # http://localhost:3000
 | `DATABASE_URL` | Conexão do Neon (use a URL com `-pooler`) |
 | `APP_PIN` | Senha que a equipe digita para entrar. Sem ela, o acesso fica livre. |
 | `AUTH_SECRET` | Texto aleatório usado para assinar o cookie de acesso. Se trocar, todo mundo precisa entrar de novo. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Cliente OAuth do Google (tipo "Aplicativo da Web") para salvar comprovantes no Drive. |
+
+## Comprovantes no Google Drive
+
+1. No Google Cloud Console, crie um projeto, ative a **Google Drive API** e configure a tela de consentimento
+   (Externo, escopo `drive.file`) e **publique** o app (com `drive.file` não precisa de verificação).
+2. Crie um **ID do cliente OAuth** do tipo *Aplicativo da Web* com o URI de redirecionamento
+   `https://dash-imel.vercel.app/api/google/callback` (e `http://localhost:3000/api/google/callback` para testar local).
+3. Coloque `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` na Vercel e faça um novo deploy.
+4. No app, aba **Pagamentos** → **Conectar Google Drive**. O app cria a pasta "Caixa do Som — Comprovantes"
+   e só enxerga os arquivos que ele mesmo criou. Os comprovantes abrem pelo app (só quem tem a senha vê).
 
 ## Estrutura
 

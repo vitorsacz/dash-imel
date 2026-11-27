@@ -3,6 +3,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { sql, lerEstado } from "@/lib/db";
+import { sincronizarPagamento, pagarMantenedor } from "@/lib/regras";
+import { apagarArquivo } from "@/lib/google";
 import { COOKIE, tokenEsperado } from "@/lib/auth";
 import type { Estado, Item, Status, Tipo } from "@/lib/types";
 
@@ -116,21 +118,6 @@ async function _excluirLancamento(lid: string) {
 }
 
 /* ---------- encomendas ---------- */
-async function sincronizarPagamento(eid: string, pago: boolean, data: string | null) {
-  await sql`delete from lancamentos where encomenda_id = ${eid}`;
-  if (!pago) return;
-  const [e] = await sql`select cliente, itens from encomendas where id = ${eid}`;
-  if (!e) return;
-  const itens = e.itens as Item[];
-  await sql.transaction(
-    itens.map((i, n) => sql`insert into lancamentos
-        (id, tipo, data, valor, produto_id, produto_nome, preco, qtd, cliente, quem, encomenda_id)
-        values (${`enc-${eid}-${n}`}, 'venda', coalesce(${data}::date, current_date),
-                ${Math.round(i.qtd * i.preco * 100) / 100}, ${i.produtoId}, ${i.nome}, ${i.preco}, ${i.qtd},
-                ${e.cliente}, 'Encomenda', ${eid})`),
-  );
-}
-
 async function _novaEncomenda(e: {
   cliente: string; contato?: string; itens: { produtoId: string; qtd: number }[];
   entrega?: string; obs?: string; pago?: boolean; hoje: string;
@@ -200,11 +187,21 @@ async function _excluirMantenedor(mid: string) {
 
 async function _registrarPagamentoMantenedor(mid: string, hoje: string, mesLabel: string) {
   await exigirAcesso();
-  const [m] = await sql`select nome, valor::float8 as valor from mantenedores where id = ${mid}`;
-  if (!m) throw new Error("Mantenedor não encontrado");
-  await sql`insert into lancamentos (id, tipo, data, valor, pessoa, descricao, mantenedor_id, quem)
-            values (${id()}, 'doacao', coalesce(${dataValida(hoje)}::date, current_date), ${m.valor}, ${m.nome},
-                    ${"Mantenedor — " + texto(mesLabel, 20)}, ${mid}, 'Mantenedor')`;
+  await pagarMantenedor(mid, dataValida(hoje), texto(mesLabel, 20));
+  return feito();
+}
+
+/* ---------- comprovantes ---------- */
+async function _excluirComprovante(cid: string) {
+  await exigirAcesso();
+  const [c] = await sql`delete from comprovantes where id = ${cid} returning drive_id`;
+  if (c) {
+    try {
+      await apagarArquivo(c.drive_id);
+    } catch (e) {
+      console.error("Drive:", e);
+    }
+  }
   return feito();
 }
 
@@ -230,3 +227,4 @@ export async function alternarMantenedor(...a: Parameters<typeof _alternarManten
 export async function excluirMantenedor(...a: Parameters<typeof _excluirMantenedor>): Promise<Resposta> { return seguro(() => _excluirMantenedor(...a)); }
 export async function registrarPagamentoMantenedor(...a: Parameters<typeof _registrarPagamentoMantenedor>): Promise<Resposta> { return seguro(() => _registrarPagamentoMantenedor(...a)); }
 export async function salvarMetas(...a: Parameters<typeof _salvarMetas>): Promise<Resposta> { return seguro(() => _salvarMetas(...a)); }
+export async function excluirComprovante(...a: Parameters<typeof _excluirComprovante>): Promise<Resposta> { return seguro(() => _excluirComprovante(...a)); }

@@ -55,3 +55,30 @@ create table config (
 );
 insert into config (id) values (1);
 insert into produtos (id, nome, preco) values ('caixinha-brigadeiro', 'Caixinha de brigadeiro', 10);
+
+-- Comprovantes de pagamento (arquivos ficam no Google Drive)
+create table comprovantes (
+  id text primary key,
+  pessoa text not null,
+  referencia text not null default '',
+  valor numeric(10,2),
+  encomenda_id text references encomendas(id) on delete set null,
+  mantenedor_id text references mantenedores(id) on delete set null,
+  drive_id text not null,
+  nome_arquivo text not null,
+  mime text not null,
+  tamanho integer,
+  enviado_por text not null default '',
+  criado_em timestamptz not null default now()
+);
+create index comprovantes_encomenda_idx on comprovantes (encomenda_id);
+create index comprovantes_mantenedor_idx on comprovantes (mantenedor_id);
+
+-- Conexão com o Google Drive (uma só, da conta que autorizou)
+create table google_conexao (
+  id smallint primary key default 1 check (id = 1),
+  refresh_token text not null,
+  pasta_id text,
+  email text,
+  conectado_em timestamptz not null default now()
+);

@@ -6,9 +6,10 @@ import type { Resposta } from "./actions";
 import type { Encomenda, Estado, Status, Tipo } from "@/lib/types";
 import { brl, dataBR, descLanc, encItens, encTotal, hoje, mesLbl, num, NOME_STATUS, NOME_TIPO } from "@/lib/format";
 import { baixarCSV, baixarPDF, calcular, textoPlanilha } from "@/lib/relatorio";
+import VistaPagamentos from "./Pagamentos";
 
 const ABAS = [
-  ["painel", "Painel"], ["encomendas", "Encomendas"], ["lancar", "Lançar"], ["produtos", "Produtos"], ["mantenedores", "Mantenedores"],
+  ["painel", "Painel"], ["encomendas", "Encomendas"], ["pagamentos", "Pagamentos"], ["lancar", "Lançar"], ["produtos", "Produtos"], ["mantenedores", "Mantenedores"],
 ] as const;
 type Aba = (typeof ABAS)[number][0];
 
@@ -133,6 +134,7 @@ export default function Painel({ inicial, temLogin }: { inicial: Estado; temLogi
         <div className="wrap">
           {aba === "painel" && <VistaPainel E={E} t={t} meses={meses} prod={prod} mm={mm} mt={mt} run={run} toast={toast} />}
           {aba === "encomendas" && <VistaEncomendas E={E} run={run} />}
+          {aba === "pagamentos" && <VistaPagamentos E={E} run={run} />}
           {aba === "lancar" && <VistaLancar E={E} run={run} toast={toast} />}
           {aba === "produtos" && <VistaProdutos E={E} run={run} />}
           {aba === "mantenedores" && <VistaMantenedores E={E} run={run} t={t} mm={mm} />}

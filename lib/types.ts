@@ -46,10 +46,27 @@ export type Mantenedor = {
 
 export type Config = { metaTotal: number; metaMes: number };
 
+export type Comprovante = {
+  id: string;
+  pessoa: string;
+  referencia: string;
+  valor: number | null;
+  encomendaId: string | null;
+  mantenedorId: string | null;
+  nomeArquivo: string;
+  mime: string;
+  enviadoPor: string;
+  criado: number;
+};
+
+export type Drive = { configurado: boolean; conectado: boolean; email: string | null };
+
 export type Estado = {
   produtos: Produto[];
   lancamentos: Lancamento[];
   encomendas: Encomenda[];
   mantenedores: Mantenedor[];
   config: Config;
+  comprovantes: Comprovante[];
+  drive: Drive;
 };
