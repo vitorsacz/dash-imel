@@ -143,3 +143,13 @@ nav.tabs button.on{background:var(--glass-hi)}
 main table,.note,.empty{font-family:"IMEL Titulo",var(--f-outfit),system-ui,sans-serif}
 main.band{padding-top:clamp(4px,1.2vw,12px)}
 @media(max-width:600px){nav.tabs{flex-wrap:wrap;width:100%}nav.tabs button{flex:1 1 auto;padding:8px 12px}}
+
+/* Ícone da igreja ocupando toda a lateral direita */
+.fundo .marca{position:absolute;right:-4vh;top:50%;transform:translateY(-50%);height:108vh;width:auto;opacity:.13;filter:drop-shadow(0 0 40px rgba(255,255,255,.08))}
+@media(max-width:600px){.fundo .marca{right:-18vh;opacity:.1}}
+
+.rodape{text-align:center;padding:28px 16px 34px;font-family:"IMEL Titulo",var(--f-outfit),system-ui,sans-serif;font-size:14px;color:var(--mute);border-top:1px solid var(--line);margin-top:24px}
+.rodape p{margin:4px 0}
+.rodape a{color:#fff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(255,127,50,.7)}
+.rodape a:hover{color:#ffb380}
+.login{min-height:calc(100dvh - 110px)}

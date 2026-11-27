@@ -87,7 +87,6 @@ export default function Painel({ inicial, temLogin }: { inicial: Estado; temLogi
   return (
     <>
       <header className="band">
-        <img className="mark" src="/icone-branco.png" alt="" aria-hidden />
         <div className="wrap">
           <div className="top">
             <img className="logo" src="/logo-escuro.png" alt="Igreja Metodista Livre Mairiporã" />

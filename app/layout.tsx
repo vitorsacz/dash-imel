@@ -21,9 +21,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="fundo" aria-hidden>
           <i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" />
+          <img className="marca" src="/icone-branco.png" alt="" />
           <div className="grao" />
         </div>
         {children}
+        <footer className="rodape">
+          <p>© 2026 IMEL Mairiporã. Todos os direitos reservados.</p>
+          <p>
+            Desenvolvido por{" "}
+            <a href="https://vitorsantos.dev.br" target="_blank" rel="noopener">
+              vitorsantos.dev.br
+            </a>
+          </p>
+        </footer>
       </body>
     </html>
   );
