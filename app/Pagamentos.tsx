@@ -202,7 +202,7 @@ export default function VistaPagamentos({ E, run }: { E: Estado; run: Run }) {
 
       {podeSubir && (
         <details open={aberto} onToggle={(e) => setAberto((e.target as HTMLDetailsElement).open)}>
-          <summary>+ Subir comprovante</summary>
+          <summary className="cta"><span className="cta-icone" aria-hidden>↑</span> Subir comprovante<small>arraste, escolha ou cole o arquivo</small></summary>
           <form ref={formRef} className="f" style={{ marginTop: 10 }} onSubmit={enviar}>
             <div className="seg">
               {(["encomenda", "doacao", "compra"] as Cat[]).map((c) => (

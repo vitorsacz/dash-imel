@@ -195,3 +195,17 @@ optgroup{background:#0b2440;color:var(--mute)}
 .drop img{width:72px;height:72px;object-fit:cover;border-radius:10px;flex:none}
 .drop .pdf{display:grid;place-items:center;width:72px;height:72px;border-radius:10px;background:rgba(255,127,50,.2);color:#ffc49c;font-weight:700;flex:none}
 .drop>span:only-child{margin:auto;text-align:center}
+
+/* Botão de destaque para subir comprovante */
+details>summary.cta{list-style:none;display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:max-content;max-width:100%;
+  min-height:56px;padding:12px 22px;border-radius:16px;font:700 18px "IMEL Titulo",var(--f-outfit),system-ui,sans-serif;color:#1a0e04;
+  background:linear-gradient(135deg,#ff9a5a,#FF7F32 55%,#f06a1d);box-shadow:0 10px 30px -8px rgba(255,127,50,.75),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .15s,box-shadow .15s}
+details>summary.cta::-webkit-details-marker{display:none}
+details>summary.cta:hover{transform:translateY(-1px);box-shadow:0 14px 34px -8px rgba(255,127,50,.9),inset 0 1px 0 rgba(255,255,255,.35)}
+details>summary.cta small{font-weight:500;font-size:13px;opacity:.75}
+.cta-icone{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(26,14,4,.15);font-size:18px}
+details[open]>summary.cta{box-shadow:none;opacity:.9}
+details[open]>summary.cta small{display:none}
+@media(max-width:600px){details>summary.cta{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){details>summary.cta{transition:none}}
