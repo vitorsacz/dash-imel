@@ -181,3 +181,6 @@ optgroup{background:#0b2440;color:var(--mute)}
 .login-extra{text-align:center}
 .login-extra a{display:inline-flex;align-items:center;min-height:44px;padding:10px 18px;border-radius:12px;color:#fff;text-decoration:none;font:600 15px "IMEL Titulo",var(--f-outfit),sans-serif;
   background:var(--card);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.texto-legal{text-align:left;max-width:760px}
+.texto-legal h1{font-size:30px;margin-bottom:14px}.texto-legal h2{font-size:19px;margin:20px 0 6px}
+.texto-legal p{margin:0 0 10px;color:var(--ink)}
