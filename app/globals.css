@@ -184,3 +184,14 @@ optgroup{background:#0b2440;color:var(--mute)}
 .texto-legal{text-align:left;max-width:760px}
 .texto-legal h1{font-size:30px;margin-bottom:14px}.texto-legal h2{font-size:19px;margin:20px 0 6px}
 .texto-legal p{margin:0 0 10px;color:var(--ink)}
+
+/* Área de arrastar e soltar */
+.drop{display:flex;align-items:center;gap:14px;min-height:110px;padding:18px;border:2px dashed rgba(255,255,255,.28);border-radius:16px;
+  background:rgba(255,255,255,.04);cursor:pointer;font-family:"IMEL Titulo",var(--f-outfit),system-ui,sans-serif;transition:border-color .2s,background .2s}
+.drop:hover,.drop:focus-visible{border-color:rgba(255,127,50,.7);outline:none}
+.drop.sobre{border-color:var(--pink);background:rgba(255,127,50,.14)}
+.drop.cheio{border-style:solid;border-color:rgba(127,224,176,.5)}
+.drop small{color:var(--mute)}
+.drop img{width:72px;height:72px;object-fit:cover;border-radius:10px;flex:none}
+.drop .pdf{display:grid;place-items:center;width:72px;height:72px;border-radius:10px;background:rgba(255,127,50,.2);color:#ffc49c;font-weight:700;flex:none}
+.drop>span:only-child{margin:auto;text-align:center}

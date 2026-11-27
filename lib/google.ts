@@ -56,7 +56,12 @@ export async function concluirConexao(code: string, redirectUri: string) {
   const pasta = PASTA_ID ?? (await criarPasta(t.access_token));
   await sql`insert into google_conexao (id, refresh_token, pasta_id, email) values (1, ${t.refresh_token}, ${pasta}, ${email})
             on conflict (id) do update set refresh_token = excluded.refresh_token, pasta_id = excluded.pasta_id,
-              email = excluded.email, conectado_em = now()`;
+              email = excluded.email, subpastas = '{}', conectado_em = now()`;
+  try {
+    await prepararSubpastas();
+  } catch (e) {
+    console.error("Subpastas:", e); // são criadas de novo no primeiro envio
+  }
 }
 
 async function criarPasta(access: string) {
@@ -82,9 +87,54 @@ export async function acesso() {
   return { access: t.access_token, pasta: (PASTA_ID ?? c.pasta_id) as string };
 }
 
-/** Envia um arquivo para a pasta de comprovantes e devolve o id dele no Drive. */
-export async function enviarArquivo(nome: string, mime: string, dados: ArrayBuffer) {
+export type Categoria = "encomenda" | "doacao" | "compra";
+export const SUBPASTAS: Record<Categoria, string> = {
+  encomenda: "Pagamentos de encomendas",
+  doacao: "Doações",
+  compra: "Compras de itens",
+};
+
+/** Acha (ou cria) a subpasta da categoria dentro da pasta principal e guarda o id. */
+async function subpasta(access: string, pai: string, cat: Categoria) {
+  const [c] = await sql`select subpastas from google_conexao where id = 1`;
+  const cache = (c?.subpastas ?? {}) as Record<string, string>;
+  if (cache[cat]) {
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${cache[cat]}?fields=id,trashed&supportsAllDrives=true`, {
+      headers: { Authorization: `Bearer ${access}` },
+    });
+    if (r.ok && !(await r.json()).trashed) return cache[cat];
+  }
+  const nome = SUBPASTAS[cat];
+  const q = `name = '${nome}' and '${pai}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  const busca = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)&supportsAllDrives=true&includeItemsFromAllDrives=true`,
+    { headers: { Authorization: `Bearer ${access}` } },
+  );
+  let id = (await busca.json()).files?.[0]?.id as string | undefined;
+  if (!id) {
+    const r = await fetch("https://www.googleapis.com/drive/v3/files?fields=id&supportsAllDrives=true", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ name: nome, mimeType: "application/vnd.google-apps.folder", parents: [pai] }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error("Não consegui criar a pasta no Drive: " + (j.error?.message ?? r.status));
+    id = j.id as string;
+  }
+  await sql`update google_conexao set subpastas = subpastas || ${JSON.stringify({ [cat]: id })}::jsonb where id = 1`;
+  return id;
+}
+
+/** Cria as três subpastas (usado ao conectar e no botão de verificar). */
+export async function prepararSubpastas() {
   const { access, pasta } = await acesso();
+  for (const cat of Object.keys(SUBPASTAS) as Categoria[]) await subpasta(access, pasta, cat);
+}
+
+/** Envia um arquivo para a subpasta da categoria e devolve o id dele no Drive. */
+export async function enviarArquivo(nome: string, mime: string, dados: ArrayBuffer, cat: Categoria) {
+  const { access, pasta: principal } = await acesso();
+  const pasta = await subpasta(access, principal, cat);
   const limite = "imel" + Math.random().toString(36).slice(2);
   const meta = JSON.stringify({ name: nome, parents: pasta ? [pasta] : undefined });
   const corpo = new Blob([

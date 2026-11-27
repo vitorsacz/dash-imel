@@ -48,6 +48,8 @@ export type Config = { metaTotal: number; metaMes: number };
 
 export type Comprovante = {
   id: string;
+  categoria: "encomenda" | "doacao" | "compra";
+  lancamentoId: string | null;
   pessoa: string;
   referencia: string;
   valor: number | null;

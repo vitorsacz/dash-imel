@@ -16,6 +16,7 @@ const txt = (v: unknown) => {
   return /^[=+\-@]/.test(s) ? "'" + s : s;
 };
 const NOME_TIPO = { venda: "Venda", gasto: "Gasto", doacao: "Doação" } as const;
+const NOME_CAT = { encomenda: "Encomenda", doacao: "Doação", compra: "Compra de itens" } as const;
 const NOME_STATUS = { afazer: "A fazer", pronta: "Pronta", entregue: "Entregue" } as const;
 
 async function api(access: string, caminho: string, metodo = "GET", corpo?: unknown) {
@@ -78,9 +79,9 @@ function montar(E: Estado, driveIds: Record<string, string>, base: string): Reco
       ...E.mantenedores.map((m) => [txt(m.nome), m.valor, m.dia ?? "", txt(m.contato), m.ativo ? "Ativo" : "Pausado"]),
     ],
     Comprovantes: [
-      ["Enviado em", "De quem", "Referente a", "Valor", "Enviado por", "Arquivo no Drive", "Abrir pelo app"],
+      ["Enviado em", "Tipo", "De quem", "Referente a", "Valor", "Enviado por", "Arquivo no Drive", "Abrir pelo app"],
       ...E.comprovantes.map((c) => [
-        new Date(c.criado).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }), txt(c.pessoa), txt(c.referencia), c.valor ?? "",
+        new Date(c.criado).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" }), NOME_CAT[c.categoria], txt(c.pessoa), txt(c.referencia), c.valor ?? "",
         txt(c.enviadoPor), driveIds[c.id] ? `https://drive.google.com/file/d/${driveIds[c.id]}/view` : "", `${base}/api/comprovantes/${c.id}`,
       ]),
     ],

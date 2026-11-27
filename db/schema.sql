@@ -82,3 +82,8 @@ create table google_conexao (
   email text,
   conectado_em timestamptz not null default now()
 );
+
+-- Categorias de comprovante e subpastas no Drive
+alter table comprovantes add column categoria text not null default 'encomenda' check (categoria in ('encomenda','doacao','compra'));
+alter table comprovantes add column lancamento_id text references lancamentos(id) on delete set null;
+alter table google_conexao add column subpastas jsonb not null default '{}';
