@@ -1,0 +1,79 @@
+/* Identidade: guia FMC — Pantone 654 #003A70, 646 #5E8AB4, 1575 #FF7F32.
+   Fontes: Kessel 105 + Freight quando instaladas no aparelho; senão Outfit + EB Garamond. */
+@font-face{font-family:"IMEL Titulo";font-weight:400 500;src:local("Kessel 105 Text Book"),local("Kessel105Text-Book")}
+@font-face{font-family:"IMEL Titulo";font-weight:600 800;src:local("Kessel 105 Text Bold"),local("Kessel105Text-Bold")}
+@font-face{font-family:"IMEL Texto";font-weight:400 500;src:local("Freight Disp Pro Book"),local("FreightDispPro-Book"),local("Freight Big Book"),local("Freight-BigBook")}
+@font-face{font-family:"IMEL Texto";font-weight:400 500;font-style:italic;src:local("Freight Disp Book Italic"),local("Freight-DispBookItalic")}
+@font-face{font-family:"IMEL Texto";font-weight:600 800;src:local("Freight Disp Bold"),local("Freight-DispBold")}
+:root{--f-outfit:"Outfit";--f-garamond:"EB Garamond";color-scheme:light dark;
+--bg:light-dark(#ffffff,#07182b);--card:light-dark(#f1f5fa,#0f2640);--line:light-dark(#d9e3ee,#1f3a5a);
+--ink:light-dark(#0b2440,#eaf1f8);--mute:light-dark(#5a6f86,#9fb4ca);
+--choc:#003A70;--blue:#5E8AB4;--pink:#FF7F32;--ok:light-dark(#1f7a4d,#6fd6a0);--bad:light-dark(#b3261e,#ff8a80)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "IMEL Texto",var(--f-garamond),Georgia,serif;overflow-x:clip}
+h1,h2,h3,.big,label,button,nav,th,.tile,.tag,.pill,.total,.lbl,.meter,input,select,summary,td.n{font-family:"IMEL Titulo",var(--f-outfit),system-ui,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
+h2{font-size:26px;font-weight:600;margin-bottom:14px}h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.band{padding:clamp(20px,3.5vw,44px) max(5vw,16px)}
+.wrap{max-width:1100px;margin:0 auto}
+header{background:var(--choc);color:#fff;position:relative;overflow:hidden}
+header .mark{position:absolute;right:max(3vw,10px);top:50%;transform:translateY(-50%);height:118%;opacity:.07;pointer-events:none}
+.logo{height:52px;width:auto;display:block}
+header .wrap{position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:22px;font-weight:600}
+.pill{font-size:13px;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.12)}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;margin-top:22px;align-items:end}
+.big{font-size:clamp(44px,8vw,76px);font-weight:700;white-space:nowrap}
+.lbl{font-size:14px;opacity:.85}
+.meter{margin-top:14px}.meter .row{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.bar{height:22px;border-radius:12px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--pink));border-radius:12px;transition:width .6s}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:24px}
+nav.tabs button{flex:none;background:transparent;color:#fff;padding:10px 16px;border-radius:12px 12px 0 0;font-weight:700;min-height:44px}
+nav.tabs button.on{background:var(--bg);color:var(--ink)}
+section.view{display:none}section.view.on{display:block}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:26px}
+.tile{background:var(--card);border-radius:14px;padding:14px 16px}
+.tile b{display:block;font:600 26px/1.1 "IMEL Titulo",var(--f-outfit),sans-serif;white-space:nowrap;margin-top:4px}
+.tile small{color:var(--mute)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--mute);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.empty{color:var(--mute);padding:18px;background:var(--card);border-radius:12px;text-align:center}
+form.f{display:grid;gap:12px;max-width:560px;background:var(--card);padding:18px;border-radius:16px;margin-bottom:26px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+label{display:grid;gap:4px;font-size:14px;font-weight:700}
+input,select,textarea{font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px;width:100%}
+select{line-height:1.2;white-space:nowrap;text-overflow:ellipsis}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:1px}
+button{font:inherit;font-family:"IMEL Titulo",var(--f-outfit),system-ui,sans-serif;font-weight:600;min-height:44px;padding:10px 16px;border-radius:12px;border:0;cursor:pointer;background:light-dark(var(--choc),var(--blue));color:#fff}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+button.sm{min-height:36px;padding:6px 12px;font-size:14px}
+button.del{background:transparent;color:var(--bad);border:1.5px solid var(--line)}
+button.del.arm{background:var(--bad);color:#fff;border-color:var(--bad)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{flex:1 1 auto;white-space:nowrap;background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.seg button.on{background:var(--choc);color:#fff;border-color:var(--choc)}
+.total{font:600 22px "IMEL Titulo",var(--f-outfit),sans-serif}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.t-venda{background:#dde8f3;color:#003A70}.t-doacao{background:#dff3e8;color:#155e3a}.t-gasto{background:#ffe6d6;color:#8a3a08}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.note{font-size:14px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--choc);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+details summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+.scroll{overflow-x:auto}
+@media(max-width:820px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2,.hero{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.two{grid-template-columns:minmax(0,1fr)}table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mute);font-size:12px}.stack td:empty{display:none}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{header nav,.actions,form,button{display:none!important}}
+
+.top .acoes{display:flex;gap:8px;align-items:center}
+.sair{background:rgba(255,255,255,.12);min-height:32px;padding:4px 12px;font-size:13px;border-radius:99px}
+.login{min-height:100dvh;display:grid;place-items:center;background:var(--choc);padding:24px}
+.login form{background:var(--bg);color:var(--ink);border-radius:20px;padding:28px;width:min(380px,100%);display:grid;gap:14px}
+.login img{height:56px;width:auto;justify-self:start}
+.erro{color:var(--bad);font-size:14px}
