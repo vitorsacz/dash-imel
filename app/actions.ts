@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { sincronizarEmSegundoPlano, sincronizarPlanilha } from "@/lib/planilha";
 import { sql, lerEstado } from "@/lib/db";
 import { sincronizarPagamento, pagarMantenedor } from "@/lib/regras";
 import { apagarArquivo } from "@/lib/google";
@@ -51,9 +53,11 @@ async function feito(): Promise<Estado> {
 
 export type Resposta = { estado?: Estado; erro?: string };
 
-async function seguro(fn: () => Promise<Estado>): Promise<Resposta> {
+async function seguro(fn: () => Promise<Estado>, planilha = true): Promise<Resposta> {
   try {
-    return { estado: await fn() };
+    const estado = await fn();
+    if (planilha) after(sincronizarEmSegundoPlano);
+    return { estado };
   } catch (e) {
     console.error(e);
     return { erro: e instanceof Error ? e.message : "Erro inesperado" };
@@ -213,7 +217,7 @@ async function _salvarMetas(metaTotal: number, metaMes: number) {
 }
 
 /* ---------- ações expostas ao navegador (erros viram mensagens) ---------- */
-export async function atualizar(...a: Parameters<typeof _atualizar>): Promise<Resposta> { return seguro(() => _atualizar(...a)); }
+export async function atualizar(...a: Parameters<typeof _atualizar>): Promise<Resposta> { return seguro(() => _atualizar(...a), false); }
 export async function salvarProduto(...a: Parameters<typeof _salvarProduto>): Promise<Resposta> { return seguro(() => _salvarProduto(...a)); }
 export async function excluirProduto(...a: Parameters<typeof _excluirProduto>): Promise<Resposta> { return seguro(() => _excluirProduto(...a)); }
 export async function novoLancamento(...a: Parameters<typeof _novoLancamento>): Promise<Resposta> { return seguro(() => _novoLancamento(...a)); }
@@ -228,3 +232,10 @@ export async function excluirMantenedor(...a: Parameters<typeof _excluirMantened
 export async function registrarPagamentoMantenedor(...a: Parameters<typeof _registrarPagamentoMantenedor>): Promise<Resposta> { return seguro(() => _registrarPagamentoMantenedor(...a)); }
 export async function salvarMetas(...a: Parameters<typeof _salvarMetas>): Promise<Resposta> { return seguro(() => _salvarMetas(...a)); }
 export async function excluirComprovante(...a: Parameters<typeof _excluirComprovante>): Promise<Resposta> { return seguro(() => _excluirComprovante(...a)); }
+
+async function _sincronizarAgora() {
+  await exigirAcesso();
+  await sincronizarPlanilha();
+  return feito();
+}
+export async function sincronizarAgora(): Promise<Resposta> { return seguro(() => _sincronizarAgora(), false); }

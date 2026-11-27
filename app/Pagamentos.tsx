@@ -157,14 +157,21 @@ export default function VistaPagamentos({ E, run }: { E: Estado; run: Run }) {
 
       <div className="vidro drive">
         {!E.drive.configurado ? (
-          <p><b>Google Drive ainda não configurado.</b> Falta cadastrar as chaves do Google na Vercel. Até lá, o painel abaixo funciona, só não dá para subir arquivos.</p>
+          <p><b>Google ainda não configurado.</b> Falta cadastrar as chaves do Google na Vercel. Até lá, o painel abaixo funciona, só não dá para subir arquivos.</p>
         ) : !E.drive.conectado ? (
           <>
-            <p><b>Conecte o Google Drive</b> para guardar os comprovantes numa pasta “Caixa do Som — Comprovantes”.</p>
-            <a className="botao" href="/api/google/conectar">Conectar Google Drive</a>
+            <p><b>Conecte sua conta Google</b> para salvar os comprovantes na pasta do Drive e manter a planilha atualizada.</p>
+            <a className="botao" href="/api/google/conectar">Conectar Google</a>
           </>
         ) : (
-          <p>Comprovantes vão para a pasta <b>Caixa do Som — Comprovantes</b> no Drive{E.drive.email ? ` de ${E.drive.email}` : ""}.</p>
+          <>
+            <p>Conectado{E.drive.email ? ` como ${E.drive.email}` : ""}. Comprovantes vão para a pasta do Drive e a planilha se atualiza a cada mudança.</p>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {E.drive.pastaUrl && <a className="tag t-venda link" href={E.drive.pastaUrl} target="_blank" rel="noopener">Abrir pasta</a>}
+              {E.drive.planilhaUrl && <a className="tag t-venda link" href={E.drive.planilhaUrl} target="_blank" rel="noopener">Abrir planilha</a>}
+              {E.drive.planilhaUrl && <button className="ghost sm" onClick={() => run(A.sincronizarAgora(), "Planilha atualizada")}>Atualizar planilha agora</button>}
+            </div>
+          </>
         )}
       </div>
 

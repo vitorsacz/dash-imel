@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
+import { sincronizarEmSegundoPlano } from "@/lib/planilha";
 import { sql, lerEstado } from "@/lib/db";
 import { enviarArquivo } from "@/lib/google";
 import { pagarMantenedor, sincronizarPagamento } from "@/lib/regras";
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
       }
       if (mantenedorId) await pagarMantenedor(mantenedorId, hoje, texto(f.get("mes"), 20));
     }
+    after(sincronizarEmSegundoPlano);
     return NextResponse.json({ estado: await lerEstado() });
   } catch (e) {
     console.error(e);

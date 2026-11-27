@@ -1,9 +1,16 @@
-// Integração com o Google Drive usando só fetch (sem SDK).
-// Escopo drive.file: o app só enxerga os arquivos e a pasta que ele mesmo criou.
+// Integração com Google Drive e Google Sheets usando só fetch (sem SDK).
+// Usa a pasta e a planilha que já existem (GOOGLE_DRIVE_FOLDER_ID e GOOGLE_SHEET_ID).
 import { sql } from "./db";
 
-export const ESCOPOS = ["https://www.googleapis.com/auth/drive.file", "openid", "email"];
+export const ESCOPOS = [
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/spreadsheets",
+  "openid",
+  "email",
+];
 const NOME_PASTA = "Caixa do Som — Comprovantes";
+export const PASTA_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || null;
+export const PLANILHA_ID = process.env.GOOGLE_SHEET_ID || null;
 
 export function googleConfigurado() {
   return !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
@@ -46,7 +53,7 @@ export async function concluirConexao(code: string, redirectUri: string) {
   try {
     email = JSON.parse(Buffer.from(t.id_token!.split(".")[1], "base64url").toString()).email ?? null;
   } catch {}
-  const pasta = await criarPasta(t.access_token);
+  const pasta = PASTA_ID ?? (await criarPasta(t.access_token));
   await sql`insert into google_conexao (id, refresh_token, pasta_id, email) values (1, ${t.refresh_token}, ${pasta}, ${email})
             on conflict (id) do update set refresh_token = excluded.refresh_token, pasta_id = excluded.pasta_id,
               email = excluded.email, conectado_em = now()`;
@@ -68,11 +75,11 @@ export async function statusConexao() {
   return c ? { conectado: true, email: (c.email as string) ?? null, pastaId: c.pastaId as string } : { conectado: false, email: null, pastaId: null };
 }
 
-async function acesso() {
+export async function acesso() {
   const [c] = await sql`select refresh_token, pasta_id from google_conexao where id = 1`;
   if (!c) throw new Error("Google Drive ainda não conectado");
   const t = await token({ refresh_token: c.refresh_token, grant_type: "refresh_token" });
-  return { access: t.access_token, pasta: c.pasta_id as string };
+  return { access: t.access_token, pasta: (PASTA_ID ?? c.pasta_id) as string };
 }
 
 /** Envia um arquivo para a pasta de comprovantes e devolve o id dele no Drive. */
@@ -86,7 +93,7 @@ export async function enviarArquivo(nome: string, mime: string, dados: ArrayBuff
     new Uint8Array(dados),
     `\r\n--${limite}--`,
   ]);
-  const r = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+  const r = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id&supportsAllDrives=true", {
     method: "POST",
     headers: { Authorization: `Bearer ${access}`, "Content-Type": `multipart/related; boundary=${limite}` },
     body: corpo,
@@ -98,7 +105,7 @@ export async function enviarArquivo(nome: string, mime: string, dados: ArrayBuff
 
 export async function baixarArquivo(driveId: string) {
   const { access } = await acesso();
-  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveId)}?alt=media`, {
+  const r = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveId)}?alt=media&supportsAllDrives=true`, {
     headers: { Authorization: `Bearer ${access}` },
   });
   if (!r.ok) throw new Error("Arquivo não encontrado no Drive");
@@ -108,7 +115,7 @@ export async function baixarArquivo(driveId: string) {
 export async function apagarArquivo(driveId: string) {
   const { access } = await acesso();
   // Manda para a lixeira do Drive (dá para recuperar por 30 dias).
-  await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveId)}`, {
+  await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveId)}?supportsAllDrives=true`, {
     method: "PATCH",
     headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
     body: JSON.stringify({ trashed: true }),

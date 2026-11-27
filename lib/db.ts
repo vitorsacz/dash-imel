@@ -36,6 +36,8 @@ export async function lerEstado(): Promise<Estado> {
       configurado: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
       conectado: google.length > 0,
       email: google[0]?.email ?? null,
+      pastaUrl: process.env.GOOGLE_DRIVE_FOLDER_ID ? `https://drive.google.com/drive/folders/${process.env.GOOGLE_DRIVE_FOLDER_ID}` : null,
+      planilhaUrl: process.env.GOOGLE_SHEET_ID ? `https://docs.google.com/spreadsheets/d/${process.env.GOOGLE_SHEET_ID}/edit` : null,
     },
   } as unknown as Estado;
 }

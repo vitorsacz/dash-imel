@@ -26,41 +26,22 @@ npm run dev                  # http://localhost:3000
 | `DATABASE_URL` | Conexão do Neon (use a URL com `-pooler`) |
 | `APP_PIN` | Senha que a equipe digita para entrar. Sem ela, o acesso fica livre. |
 | `AUTH_SECRET` | Texto aleatório usado para assinar o cookie de acesso. Se trocar, todo mundo precisa entrar de novo. |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Cliente OAuth do Google (tipo "Aplicativo da Web") para salvar comprovantes no Drive. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Cliente OAuth do Google (tipo "Aplicativo da Web"). |
+| `GOOGLE_DRIVE_FOLDER_ID` | Pasta do Drive onde ficam os comprovantes. |
+| `GOOGLE_SHEET_ID` | Planilha que espelha os dados (abas Resumo, Lançamentos, Encomendas, Mantenedores, Comprovantes). |
+| `APP_URL` | Endereço público do app, usado nos links da planilha. |
 
-## Comprovantes no Google Drive
+## Google Drive e Planilha
 
-1. No Google Cloud Console, crie um projeto, ative a **Google Drive API** e configure a tela de consentimento
-   (Externo, escopo `drive.file`) e **publique** o app (com `drive.file` não precisa de verificação).
-2. Crie um **ID do cliente OAuth** do tipo *Aplicativo da Web* com o URI de redirecionamento
-   `https://dash-imel.vercel.app/api/google/callback` (e `http://localhost:3000/api/google/callback` para testar local).
-3. Coloque `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` na Vercel e faça um novo deploy.
-4. No app, aba **Pagamentos** → **Conectar Google Drive**. O app cria a pasta "Caixa do Som — Comprovantes"
-   e só enxerga os arquivos que ele mesmo criou. Os comprovantes abrem pelo app (só quem tem a senha vê).
+1. Google Cloud Console → projeto → ative **Google Drive API** e **Google Sheets API**.
+2. Tela de consentimento OAuth: Externo, escopos `drive` e `spreadsheets`, e **Publicar app**
+   (fica "não verificado": na hora de autorizar, clique em *Avançado → Acessar*; em modo de teste a conexão cai a cada 7 dias).
+3. Credenciais → **ID do cliente OAuth** → *Aplicativo da Web*, com o URI de redirecionamento
+   `https://imel.vitorsantos.dev.br/api/google/callback` (e o do `dash-imel.vercel.app`, se for usar).
+4. `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` na Vercel → novo deploy.
+5. No app, aba **Pagamentos** → **Conectar Google**, entrando com a conta dona da pasta e da planilha.
 
-## Estrutura
-
-```
-app/
-  page.tsx        lê o banco e entrega para o Painel
-  Painel.tsx      telas: Painel, Encomendas, Lançar, Produtos, Mantenedores
-  actions.ts      todas as gravações no banco (com checagem de acesso)
-  login/          tela de senha
-lib/
-  db.ts           conexão e leitura do estado
-  relatorio.ts    cálculos, PDF e CSV
-  format.ts       moeda, datas e textos
-middleware.ts     bloqueia quem não entrou com a senha
-db/schema.sql     tabelas do Neon
-```
-
-## Regras do negócio
-
-- **Lucro** = vendas + doações − gastos. É o que vai para as parcelas.
-- Quando uma encomenda é marcada como **paga**, o app cria as vendas correspondentes;
-  se desmarcar ou excluir a encomenda, essas vendas saem juntas.
-- "Registrar pagamento" de um mantenedor lança uma doação no mês atual.
-- Excluir um doce só o esconde da lista; o histórico de vendas continua.
+O banco (Neon) é a fonte da verdade: a planilha é reescrita a cada mudança, então editar a planilha à mão não altera o app.
 
 ## Fontes
 

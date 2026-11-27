@@ -59,7 +59,7 @@ export type Comprovante = {
   criado: number;
 };
 
-export type Drive = { configurado: boolean; conectado: boolean; email: string | null };
+export type Drive = { configurado: boolean; conectado: boolean; email: string | null; pastaUrl: string | null; planilhaUrl: string | null };
 
 export type Estado = {
   produtos: Produto[];
