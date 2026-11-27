@@ -74,6 +74,7 @@ details summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;alig
 .top .acoes{display:flex;gap:8px;align-items:center}
 .sair{background:rgba(255,255,255,.12);min-height:32px;padding:4px 12px;font-size:13px;border-radius:99px}
 .login{min-height:100dvh;display:grid;place-items:center;background:var(--choc);padding:24px}
-.login form{background:var(--bg);color:var(--ink);border-radius:20px;padding:28px;width:min(380px,100%);display:grid;gap:14px}
-.login img{height:56px;width:auto;justify-self:start}
+.login-box{width:min(380px,100%);display:grid;gap:22px}
+.login form{background:var(--bg);color:var(--ink);border-radius:20px;padding:28px;display:grid;gap:14px}
+.login img{height:64px;width:auto;justify-self:start}
 .erro{color:var(--bad);font-size:14px}

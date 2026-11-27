@@ -7,8 +7,9 @@ export default function Login() {
   const [estado, acao, enviando] = useActionState(entrar, {});
   return (
     <main className="login">
-      <form action={acao}>
-        <img src="/logo-claro.png" alt="Igreja Metodista Livre Mairiporã" />
+      <div className="login-box">
+        <img src="/logo-escuro.png" alt="Igreja Metodista Livre Mairiporã" />
+        <form action={acao}>
         <h2 style={{ margin: 0 }}>Caixa do Som</h2>
         <label>
           Senha da equipe
@@ -16,7 +17,8 @@ export default function Login() {
         </label>
         {estado?.erro && <p className="erro">{estado.erro}</p>}
         <button disabled={enviando}>{enviando ? "Entrando…" : "Entrar"}</button>
-      </form>
+        </form>
+      </div>
     </main>
   );
 }
