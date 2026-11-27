@@ -18,7 +18,13 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        <div className="fundo" aria-hidden>
+          <i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" />
+          <div className="grao" />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
