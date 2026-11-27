@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { entrar } from "../actions";
 
 export default function Login() {
@@ -18,6 +19,9 @@ export default function Login() {
         {estado?.erro && <p className="erro">{estado.erro}</p>}
         <button disabled={enviando}>{enviando ? "Entrando…" : "Entrar"}</button>
         </form>
+        <div className="login-extra">
+          <Link href="/prestacao-de-contas">Ver prestação de contas</Link>
+        </div>
       </div>
     </main>
   );

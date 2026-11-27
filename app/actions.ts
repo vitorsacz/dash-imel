@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { sql, lerEstado } from "@/lib/db";
 import { sincronizarPagamento, pagarMantenedor } from "@/lib/regras";
 import { apagarArquivo } from "@/lib/google";
-import { COOKIE, tokenEsperado } from "@/lib/auth";
+import { COOKIE, DURACAO_SESSAO, tokenEsperado } from "@/lib/auth";
 import type { Estado, Item, Status, Tipo } from "@/lib/types";
 
 /* ---------- acesso ---------- */
@@ -24,7 +24,7 @@ export async function entrar(_: unknown, form: FormData): Promise<{ erro?: strin
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 90,
+    maxAge: DURACAO_SESSAO,
     path: "/",
   });
   redirect("/");
