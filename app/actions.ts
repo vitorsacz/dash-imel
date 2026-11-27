@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { sincronizarEmSegundoPlano, sincronizarPlanilha } from "@/lib/planilha";
 import { sql, lerEstado } from "@/lib/db";
 import { sincronizarPagamento, pagarMantenedor } from "@/lib/regras";
-import { apagarArquivo } from "@/lib/google";
+import { apagarArquivo, prepararSubpastas } from "@/lib/google";
 import { COOKIE, DURACAO_SESSAO, tokenEsperado } from "@/lib/auth";
 import type { Estado, Item, Status, Tipo } from "@/lib/types";
 
@@ -235,6 +235,7 @@ export async function excluirComprovante(...a: Parameters<typeof _excluirComprov
 
 async function _sincronizarAgora() {
   await exigirAcesso();
+  await prepararSubpastas(); // garante as 3 pastas no Drive
   await sincronizarPlanilha();
   return feito();
 }

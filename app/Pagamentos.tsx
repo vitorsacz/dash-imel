@@ -194,7 +194,7 @@ export default function VistaPagamentos({ E, run }: { E: Estado; run: Run }) {
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {E.drive.pastaUrl && <a className="tag t-venda link" href={E.drive.pastaUrl} target="_blank" rel="noopener">Abrir pasta</a>}
               {E.drive.planilhaUrl && <a className="tag t-venda link" href={E.drive.planilhaUrl} target="_blank" rel="noopener">Abrir planilha</a>}
-              {E.drive.planilhaUrl && <button className="ghost sm" onClick={() => run(A.sincronizarAgora(), "Planilha atualizada")}>Atualizar planilha agora</button>}
+              {E.drive.planilhaUrl && <button className="ghost sm" onClick={() => run(A.sincronizarAgora(), "Pastas e planilha atualizadas")}>Atualizar pastas e planilha</button>}
             </div>
           </>
         )}
